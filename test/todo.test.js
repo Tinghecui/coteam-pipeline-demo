@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { test } from "node:test"
-import { addItem, clearAll, clearDone, createList, footerText, remaining, removeItem, toggleItem } from "../src/todo.js"
+import { addItem, clearAll, clearDone, createList, footerText, remaining, removeItem, sortItems, toggleItem } from "../src/todo.js"
 
 test("adding trims the title and refuses an empty one", () => {
   const list = addItem(createList(), "  buy milk  ")
@@ -46,6 +46,17 @@ test("footer adds the done count after a middle dot, only when something is done
   assert.equal(footerText(list), "0 items left · 3 done")
 })
 
+test("sorting by added order, by title A–Z, or open ones first, without changing the list", () => {
+  let list = addItem(addItem(addItem(createList(), "pears"), "Apples"), "bananas")
+  list = toggleItem(list, list[1].id)
+  const titles = (items) => items.map((i) => i.title)
+  assert.deepEqual(titles(sortItems(list, "added")), ["pears", "Apples", "bananas"])
+  assert.deepEqual(titles(sortItems(list, "title")), ["Apples", "bananas", "pears"])
+  assert.deepEqual(titles(sortItems(list, "open-first")), ["pears", "bananas", "Apples"])
+  assert.deepEqual(titles(sortItems(list, "nonsense")), ["pears", "Apples", "bananas"])
+  assert.deepEqual(titles(list), ["pears", "Apples", "bananas"])
+})
+
 test("clearing all removes every item, done or not", () => {
   let list = addItem(addItem(createList(), "a"), "b")
   list = toggleItem(list, list[0].id)
@@ -58,4 +69,10 @@ test("adding refuses a title longer than 100 characters", () => {
   assert.equal(list[0].title.length, 100)
   assert.equal(addItem(list, `  ${"y".repeat(100)}  `)[1].title, "y".repeat(100))
   assert.throws(() => addItem(list, "x".repeat(101)), { message: "A to-do title can be at most 100 characters" })
+})
+
+test("an emoji counts as one character toward the title limit", () => {
+  const list = addItem(createList(), "🍎".repeat(100))
+  assert.equal(list[0].title, "🍎".repeat(100))
+  assert.throws(() => addItem(list, "🍎".repeat(101)), { message: "A to-do title can be at most 100 characters" })
 })

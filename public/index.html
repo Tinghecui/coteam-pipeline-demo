@@ -14,13 +14,20 @@
   <body>
     <h1>To-do</h1>
     <form id="new"><input id="title" placeholder="What needs doing?" autofocus /> <button>Add</button></form>
+    <label>Sort by
+      <select id="sort">
+        <option value="added">Date added</option>
+        <option value="title">Title (A–Z)</option>
+        <option value="open-first">Open first</option>
+      </select>
+    </label>
     <ul id="items"></ul>
     <p id="footer"></p>
     <a id="undo" href="#" hidden>Undo</a>
     <button id="clear">Clear done</button>
     <button id="clear-all">Clear all</button>
     <script type="module">
-      import { addItem, clearAll, clearDone, footerText, removeItem, toggleItem } from "/src/todo.js"
+      import { addItem, clearAll, clearDone, footerText, removeItem, sortItems, toggleItem } from "/src/todo.js"
       import { loadList, saveList } from "/src/storage.js"
       let list = loadList(localStorage)
       const $ = (id) => document.getElementById(id)
@@ -40,7 +47,7 @@
       }
       function render() {
         $("items").replaceChildren(
-          ...list.map((item) => {
+          ...sortItems(list, $("sort").value).map((item) => {
             const li = document.createElement("li")
             li.className = item.done ? "done" : ""
             const box = Object.assign(document.createElement("input"), { type: "checkbox", checked: item.done })
@@ -63,6 +70,7 @@
         e.preventDefault()
         try { update(addItem(list, $("title").value)); $("title").value = "" } catch (err) { alert(err.message) }
       }
+      $("sort").onchange = render
       $("undo").onclick = (e) => {
         e.preventDefault()
         clearTimeout(undoTimer)

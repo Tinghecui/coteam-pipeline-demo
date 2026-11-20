@@ -12,6 +12,6 @@ stack:
   ui_paths: ["public/**"]
 limits:
   max_parallel: 2
-  daily_usd: 15
+  daily_usd: 1
   issue_max_usd: 8
   executor_minutes: 40

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { test } from "node:test"
-import { isExpired, remainingMinutes } from "../src/auth/session.js"
+import { DEFAULT_SESSION_MINUTES, isExpired, remainingMinutes } from "../src/auth/session.js"
 
 const session = { expiresAt: "2026-01-01T12:00:00.000Z" }
 
@@ -30,4 +30,8 @@ test("remaining minutes never go below 0", () => {
   assert.equal(remainingMinutes(session, new Date("2026-01-01T13:30:00.000Z")), 0)
   assert.equal(remainingMinutes({}, new Date("2026-01-01T11:00:00.000Z")), 0)
   assert.equal(remainingMinutes({ expiresAt: "not a date" }, new Date("2026-01-01T11:00:00.000Z")), 0)
+})
+
+test("the default session length is 60 minutes", () => {
+  assert.equal(DEFAULT_SESSION_MINUTES, 60)
 })

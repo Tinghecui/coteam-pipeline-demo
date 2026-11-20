@@ -1,5 +1,8 @@
 // Session helpers for the coming sign-in, kept free of the DOM so they can be tested with plain node.
 
+// How long a new session lasts, in minutes.
+export const DEFAULT_SESSION_MINUTES = 60
+
 // Milliseconds until the session expires, or NaN when expiresAt is missing or unparsable.
 function msLeft(session, now) {
   const expiresAt = Date.parse(session?.expiresAt ?? "")

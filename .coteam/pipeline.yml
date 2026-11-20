@@ -12,7 +12,6 @@ risk:
   level2: ["src/**"]
 limits:
   max_parallel: 2
-  # Test setting: already spent, so the next issue has to wait.
-  daily_usd: 1
+  daily_usd: 15
   issue_max_usd: 8
   executor_minutes: 40

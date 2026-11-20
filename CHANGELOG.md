@@ -10,3 +10,4 @@
 - After ticking a to-do, an "Undo" link under the footer unticks it again; it stays for 5 seconds and only for the last to-do ticked.
 - A "Sort by" menu above the list shows the to-dos by date added (as before), by title A–Z, or with open ones first.
 - A to-do title can be at most 100 characters; a longer one is refused with "A to-do title can be at most 100 characters", the same way an empty title is refused.
+- The browser tab title reads "To-dos (N open)", N being the to-dos not ticked yet, and follows every change.

@@ -27,7 +27,7 @@
     <button id="clear">Clear done</button>
     <button id="clear-all">Clear all</button>
     <script type="module">
-      import { addItem, clearAll, clearDone, footerText, removeItem, sortItems, toggleItem } from "/src/todo.js"
+      import { addItem, clearAll, clearDone, footerText, remaining, removeItem, sortItems, toggleItem } from "/src/todo.js"
       import { loadList, saveList } from "/src/storage.js"
       let list = loadList(localStorage)
       const $ = (id) => document.getElementById(id)
@@ -63,6 +63,7 @@
           }),
         )
         $("footer").textContent = footerText(list)
+        document.title = `To-dos (${remaining(list)} open)`
         // Only while that to-do is still there and still ticked.
         $("undo").hidden = !list.some((item) => item.id === undoId && item.done)
       }

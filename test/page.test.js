@@ -41,8 +41,18 @@ function fakeStore(initial = {}) {
 }
 
 // Loads the page with the given store; returns its elements and helpers to use it.
+// Timers are fake: they only fire when the test calls wait().
 async function openPage(store) {
   const elements = {}
+  let timers = []
+  globalThis.setTimeout = (fn, ms) => {
+    const timer = { fn, ms }
+    timers.push(timer)
+    return timer
+  }
+  globalThis.clearTimeout = (timer) => {
+    timers = timers.filter((t) => t !== timer)
+  }
   const el = (id) => (elements[id] ??= fakeElement())
   globalThis.document = {
     getElementById: el,
@@ -65,6 +75,14 @@ async function openPage(store) {
     remove: (i) => rows()[i].children[2].onclick(),
     clearDone: () => el("clear").onclick(),
     clearAll: () => el("clear-all").onclick?.(),
+    undoShown: () => el("undo").hidden === false,
+    undo: () => el("undo").onclick?.({ preventDefault() {} }),
+    // Lets every pending timer of at most ms fire.
+    wait(ms) {
+      const due = timers.filter((t) => t.ms <= ms)
+      timers = timers.filter((t) => t.ms > ms)
+      due.forEach((t) => t.fn())
+    },
   }
 }
 
@@ -137,4 +155,52 @@ test("clear all empties the list, done or not, and saves the empty list", async 
   assert.deepEqual(stored(store), [])
   const again = await openPage(store)
   assert.deepEqual(again.titles(), [])
+})
+
+test("ticking a to-do shows Undo, which unticks it again and saves", async () => {
+  const store = fakeStore()
+  const page = await openPage(store)
+  page.add("a")
+  page.add("b")
+  assert.equal(page.undoShown(), false)
+  page.toggle(1)
+  assert.equal(page.undoShown(), true)
+  page.undo()
+  assert.deepEqual(page.ticks(), [false, false])
+  assert.deepEqual(stored(store).map((i) => i.done), [false, false])
+  assert.equal(page.undoShown(), false)
+})
+
+test("Undo goes away after a few seconds", async () => {
+  const page = await openPage(fakeStore())
+  page.add("a")
+  page.toggle(0)
+  page.wait(5000)
+  assert.equal(page.undoShown(), false)
+  assert.deepEqual(page.ticks(), [true])
+})
+
+test("unticking does not offer Undo, and unticking by hand hides it", async () => {
+  const page = await openPage(fakeStore())
+  page.add("a")
+  page.toggle(0)
+  page.toggle(0)
+  assert.equal(page.undoShown(), false)
+  assert.deepEqual(page.ticks(), [false])
+})
+
+test("Undo is for the last ticked to-do and goes away when it is deleted", async () => {
+  const page = await openPage(fakeStore())
+  page.add("a")
+  page.add("b")
+  page.toggle(0)
+  page.toggle(1)
+  page.undo()
+  assert.deepEqual(page.ticks(), [true, false])
+
+  page.toggle(1)
+  page.remove(1)
+  assert.equal(page.undoShown(), false)
+  page.undo()
+  assert.deepEqual(page.ticks(), [true])
 })

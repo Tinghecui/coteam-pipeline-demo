@@ -32,5 +32,16 @@ test("footer says item for exactly one open to-do, items otherwise", () => {
   list = addItem(list, "b")
   assert.equal(footerText(list), "2 items left")
   list = toggleItem(list, list[0].id)
-  assert.equal(footerText(list), "1 item left")
+  assert.equal(footerText(list), "1 item left · 1 done")
+})
+
+test("footer adds the done count after a middle dot, only when something is done", () => {
+  let list = addItem(addItem(addItem(createList(), "a"), "b"), "c")
+  assert.equal(footerText(list), "3 items left")
+  list = toggleItem(list, list[0].id)
+  assert.equal(footerText(list), "2 items left · 1 done")
+  list = toggleItem(list, list[1].id)
+  assert.equal(footerText(list), "1 item left · 2 done")
+  list = toggleItem(list, list[2].id)
+  assert.equal(footerText(list), "0 items left · 3 done")
 })

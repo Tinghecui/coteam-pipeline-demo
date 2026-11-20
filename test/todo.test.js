@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { test } from "node:test"
-import { addItem, clearAll, clearDone, createList, footerText, remaining, removeItem, sortItems, toggleItem } from "../src/todo.js"
+import { addItem, clearAll, clearDone, countOpen, createList, footerText, remaining, removeItem, sortItems, toggleItem } from "../src/todo.js"
 
 test("adding trims the title and refuses an empty one", () => {
   const list = addItem(createList(), "  buy milk  ")
@@ -75,4 +75,14 @@ test("an emoji counts as one character toward the title limit", () => {
   const list = addItem(createList(), "🍎".repeat(100))
   assert.equal(list[0].title, "🍎".repeat(100))
   assert.throws(() => addItem(list, "🍎".repeat(101)), { message: "A to-do title can be at most 100 characters" })
+})
+
+test("countOpen counts the to-dos not done yet", () => {
+  assert.equal(countOpen(createList()), 0)
+  let list = addItem(addItem(addItem(createList(), "a"), "b"), "c")
+  assert.equal(countOpen(list), 3)
+  list = toggleItem(list, list[1].id)
+  assert.equal(countOpen(list), 2)
+  list = toggleItem(toggleItem(list, list[0].id), list[2].id)
+  assert.equal(countOpen(list), 0)
 })

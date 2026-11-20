@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { test } from "node:test"
-import { addItem, clearDone, createList, remaining, removeItem, toggleItem } from "../src/todo.js"
+import { addItem, clearDone, createList, footerText, remaining, removeItem, toggleItem } from "../src/todo.js"
 
 test("adding trims the title and refuses an empty one", () => {
   const list = addItem(createList(), "  buy milk  ")
@@ -22,4 +22,15 @@ test("removing and clearing done items", () => {
   list = toggleItem(list, list[1].id)
   assert.equal(clearDone(list).length, 1)
   assert.equal(removeItem(list, list[0].id).length, 1)
+})
+
+test("footer says item for exactly one open to-do, items otherwise", () => {
+  let list = createList()
+  assert.equal(footerText(list), "0 items left")
+  list = addItem(list, "a")
+  assert.equal(footerText(list), "1 item left")
+  list = addItem(list, "b")
+  assert.equal(footerText(list), "2 items left")
+  list = toggleItem(list, list[0].id)
+  assert.equal(footerText(list), "1 item left")
 })

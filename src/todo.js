@@ -27,7 +27,7 @@ export function remaining(list) {
 
 export function footerText(list) {
   const n = remaining(list)
-  return `${n} items left`
+  return `${n} ${n === 1 ? "item" : "items"} left`
 }
 
 export function clearDone(list) {

@@ -11,4 +11,5 @@
 - A "Sort by" menu above the list shows the to-dos by date added (as before), by title A–Z, or with open ones first.
 - A to-do title can be at most 100 characters; a longer one is refused with "A to-do title can be at most 100 characters", the same way an empty title is refused.
 - The browser tab title reads "To-dos (N open)", N being the to-dos not ticked yet, and follows every change.
+- The README says how to run the tests.
 - New `countOpen(list)` in the to-do logic returns how many to-dos are not done yet. The page does not use it.

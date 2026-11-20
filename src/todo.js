@@ -32,9 +32,9 @@ export function remaining(list) {
   return list.filter((item) => !item.done).length
 }
 
-// How many to-dos are not done yet.
+// How many to-dos are not done yet; the same count as remaining(), so the two cannot drift apart.
 export function countOpen(list) {
-  return list.filter((item) => !item.done).length
+  return remaining(list)
 }
 
 export function footerText(list) {

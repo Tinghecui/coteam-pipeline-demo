@@ -17,8 +17,9 @@
     <ul id="items"></ul>
     <p id="footer"></p>
     <button id="clear">Clear done</button>
+    <button id="clear-all">Clear all</button>
     <script type="module">
-      import { addItem, clearDone, footerText, removeItem, toggleItem } from "/src/todo.js"
+      import { addItem, clearAll, clearDone, footerText, removeItem, toggleItem } from "/src/todo.js"
       import { loadList, saveList } from "/src/storage.js"
       let list = loadList(localStorage)
       const $ = (id) => document.getElementById(id)
@@ -49,6 +50,7 @@
         try { update(addItem(list, $("title").value)); $("title").value = "" } catch (err) { alert(err.message) }
       }
       $("clear").onclick = () => update(clearDone(list))
+      $("clear-all").onclick = () => update(clearAll(list))
       render()
     </script>
   </body>

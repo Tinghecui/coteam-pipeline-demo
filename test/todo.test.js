@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { test } from "node:test"
-import { addItem, clearDone, createList, footerText, remaining, removeItem, toggleItem } from "../src/todo.js"
+import { addItem, clearAll, clearDone, createList, footerText, remaining, removeItem, toggleItem } from "../src/todo.js"
 
 test("adding trims the title and refuses an empty one", () => {
   const list = addItem(createList(), "  buy milk  ")
@@ -44,4 +44,11 @@ test("footer adds the done count after a middle dot, only when something is done
   assert.equal(footerText(list), "1 item left · 2 done")
   list = toggleItem(list, list[2].id)
   assert.equal(footerText(list), "0 items left · 3 done")
+})
+
+test("clearing all removes every item, done or not", () => {
+  let list = addItem(addItem(createList(), "a"), "b")
+  list = toggleItem(list, list[0].id)
+  assert.deepEqual(clearAll(list), [])
+  assert.deepEqual(clearAll(createList()), [])
 })

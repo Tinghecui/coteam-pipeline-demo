@@ -80,6 +80,7 @@ async function openPage(store) {
       el("sort").onchange?.()
     },
     undoShown: () => el("undo").hidden === false,
+    tabTitle: () => globalThis.document.title,
     undo: () => el("undo").onclick?.({ preventDefault() {} }),
     // Lets every pending timer of at most ms fire.
     wait(ms) {
@@ -232,4 +233,29 @@ test("the Sort by menu reorders the page, and rows act on the to-do shown", asyn
   assert.deepEqual(page.titles(), ["pears", "Apples", "cherries"])
   // Sorting only changes what is shown; the saved list keeps the order things were added.
   assert.deepEqual(stored(store).map((i) => [i.title, i.done]), [["pears", false], ["Apples", true], ["cherries", false]])
+})
+
+test("the tab title counts the open to-dos and follows every change", async () => {
+  const store = fakeStore({
+    "todo-list:v1": JSON.stringify([
+      { id: 1, title: "buy milk", done: true },
+      { id: 7, title: "post letter", done: false },
+    ]),
+  })
+  const page = await openPage(store)
+  assert.equal(page.tabTitle(), "To-dos (1 open)")
+
+  page.add("a")
+  page.add("b")
+  assert.equal(page.tabTitle(), "To-dos (3 open)")
+  page.toggle(1)
+  assert.equal(page.tabTitle(), "To-dos (2 open)")
+  page.undo()
+  assert.equal(page.tabTitle(), "To-dos (3 open)")
+  page.remove(2)
+  assert.equal(page.tabTitle(), "To-dos (2 open)")
+  page.clearDone()
+  assert.equal(page.tabTitle(), "To-dos (2 open)")
+  page.clearAll()
+  assert.equal(page.tabTitle(), "To-dos (0 open)")
 })

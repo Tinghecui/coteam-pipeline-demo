@@ -23,34 +23,64 @@
     </label>
     <ul id="items"></ul>
     <p id="footer"></p>
+    <a id="undo" href="#" hidden>Undo</a>
     <button id="clear">Clear done</button>
+    <button id="clear-all">Clear all</button>
     <script type="module">
-      import { addItem, clearDone, createList, footerText, removeItem, sortItems, toggleItem } from "/src/todo.js"
-      let list = createList()
+      import { addItem, clearAll, clearDone, footerText, removeItem, sortItems, toggleItem } from "/src/todo.js"
+      import { loadList, saveList } from "/src/storage.js"
+      let list = loadList(localStorage)
       const $ = (id) => document.getElementById(id)
+      // The to-do just ticked, which "Undo" can untick for a few seconds.
+      let undoId = null
+      let undoTimer
+      function offerUndo(id) {
+        clearTimeout(undoTimer)
+        undoId = id
+        undoTimer = setTimeout(() => { undoId = null; render() }, 5000)
+      }
+      // Every change goes through here, so the stored list never lags behind the page.
+      function update(next) {
+        list = next
+        saveList(list, localStorage)
+        render()
+      }
       function render() {
         $("items").replaceChildren(
           ...sortItems(list, $("sort").value).map((item) => {
             const li = document.createElement("li")
             li.className = item.done ? "done" : ""
             const box = Object.assign(document.createElement("input"), { type: "checkbox", checked: item.done })
-            box.onchange = () => { list = toggleItem(list, item.id); render() }
+            box.onchange = () => {
+              if (!item.done) offerUndo(item.id)
+              update(toggleItem(list, item.id))
+            }
             const text = Object.assign(document.createElement("span"), { textContent: item.title })
             const del = Object.assign(document.createElement("button"), { textContent: "×" })
-            del.onclick = () => { list = removeItem(list, item.id); render() }
+            del.onclick = () => update(removeItem(list, item.id))
             li.append(box, text, del)
             return li
           }),
         )
         $("footer").textContent = footerText(list)
+        // Only while that to-do is still there and still ticked.
+        $("undo").hidden = !list.some((item) => item.id === undoId && item.done)
       }
       $("new").onsubmit = (e) => {
         e.preventDefault()
-        try { list = addItem(list, $("title").value); $("title").value = "" } catch (err) { alert(err.message) }
-        render()
+        try { update(addItem(list, $("title").value)); $("title").value = "" } catch (err) { alert(err.message) }
       }
       $("sort").onchange = render
-      $("clear").onclick = () => { list = clearDone(list); render() }
+      $("undo").onclick = (e) => {
+        e.preventDefault()
+        clearTimeout(undoTimer)
+        const id = undoId
+        undoId = null
+        if (list.some((item) => item.id === id && item.done)) update(toggleItem(list, id))
+        else render()
+      }
+      $("clear").onclick = () => update(clearDone(list))
+      $("clear-all").onclick = () => update(clearAll(list))
       render()
     </script>
   </body>

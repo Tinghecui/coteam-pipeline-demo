@@ -9,7 +9,10 @@ export function createList() {
 export function addItem(list, title) {
   const text = String(title ?? "").trim()
   if (!text) throw new Error("A to-do needs a title")
-  return [...list, { id: nextId++, title: text, done: false }]
+  // Never below an id already in the list, so a list loaded from storage keeps its ids unique.
+  const id = Math.max(nextId, ...list.map((item) => item.id + 1))
+  nextId = id + 1
+  return [...list, { id, title: text, done: false }]
 }
 
 export function toggleItem(list, id) {
@@ -34,6 +37,11 @@ export function footerText(list) {
 
 export function clearDone(list) {
   return list.filter((item) => !item.done)
+}
+
+// Empties the whole list, done or not; asks nothing, as the page's "Clear all" button does.
+export function clearAll(list) {
+  return []
 }
 
 // The order the list is shown in; the list itself always stays in the order things were added.

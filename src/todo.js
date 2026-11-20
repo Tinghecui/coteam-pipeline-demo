@@ -32,6 +32,11 @@ export function remaining(list) {
   return list.filter((item) => !item.done).length
 }
 
+// How many to-dos are not done yet.
+export function countOpen(list) {
+  return list.filter((item) => !item.done).length
+}
+
 export function footerText(list) {
   const n = remaining(list)
   const left = `${n} ${n === 1 ? "item" : "items"} left`

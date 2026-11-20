@@ -64,6 +64,7 @@ async function openPage(store) {
     toggle: (i) => rows()[i].children[0].onchange(),
     remove: (i) => rows()[i].children[2].onclick(),
     clearDone: () => el("clear").onclick(),
+    clearAll: () => el("clear-all").onclick?.(),
   }
 }
 
@@ -123,4 +124,17 @@ test("what one page saved comes back in the next, ticks kept", async () => {
   const second = await openPage(store)
   assert.deepEqual(second.titles(), ["a", "b"])
   assert.deepEqual(second.ticks(), [true, false])
+})
+
+test("clear all empties the list, done or not, and saves the empty list", async () => {
+  const store = fakeStore()
+  const page = await openPage(store)
+  page.add("a")
+  page.add("b")
+  page.toggle(0)
+  page.clearAll()
+  assert.deepEqual(page.titles(), [])
+  assert.deepEqual(stored(store), [])
+  const again = await openPage(store)
+  assert.deepEqual(again.titles(), [])
 })

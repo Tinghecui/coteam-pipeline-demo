@@ -38,3 +38,8 @@ export function footerText(list) {
 export function clearDone(list) {
   return list.filter((item) => !item.done)
 }
+
+// Empties the whole list, done or not; asks nothing, as the page's "Clear all" button does.
+export function clearAll(list) {
+  return []
+}

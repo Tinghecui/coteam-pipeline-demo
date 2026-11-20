@@ -14,3 +14,13 @@ jobs:
         with:
           node-version: 22
       - run: npm test
+  changelog:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: node scripts/check-changelog.mjs
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}

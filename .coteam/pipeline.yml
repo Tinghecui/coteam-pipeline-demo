@@ -7,9 +7,6 @@ stack:
   test: "npm test"
   check: ["npm test"]
   ui_paths: ["public/**"]
-risk:
-  # Test setting: every change under src/ asks an owner (level 2).
-  level2: ["src/**"]
 limits:
   max_parallel: 2
   daily_usd: 15

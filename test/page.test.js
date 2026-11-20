@@ -75,6 +75,10 @@ async function openPage(store) {
     remove: (i) => rows()[i].children[2].onclick(),
     clearDone: () => el("clear").onclick(),
     clearAll: () => el("clear-all").onclick?.(),
+    sort(order) {
+      el("sort").value = order
+      el("sort").onchange?.()
+    },
     undoShown: () => el("undo").hidden === false,
     undo: () => el("undo").onclick?.({ preventDefault() {} }),
     // Lets every pending timer of at most ms fire.
@@ -203,4 +207,29 @@ test("Undo is for the last ticked to-do and goes away when it is deleted", async
   assert.equal(page.undoShown(), false)
   page.undo()
   assert.deepEqual(page.ticks(), [true])
+})
+
+test("the Sort by menu reorders the page, and rows act on the to-do shown", async () => {
+  const store = fakeStore()
+  const page = await openPage(store)
+  page.add("pears")
+  page.add("Apples")
+  page.add("bananas")
+
+  page.sort("title")
+  assert.deepEqual(page.titles(), ["Apples", "bananas", "pears"])
+  page.toggle(0)
+  assert.deepEqual(page.ticks(), [true, false, false])
+
+  page.sort("open-first")
+  assert.deepEqual(page.titles(), ["pears", "bananas", "Apples"])
+  page.add("cherries")
+  assert.deepEqual(page.titles(), ["pears", "bananas", "cherries", "Apples"])
+  page.remove(1)
+  assert.deepEqual(page.titles(), ["pears", "cherries", "Apples"])
+
+  page.sort("added")
+  assert.deepEqual(page.titles(), ["pears", "Apples", "cherries"])
+  // Sorting only changes what is shown; the saved list keeps the order things were added.
+  assert.deepEqual(stored(store).map((i) => [i.title, i.done]), [["pears", false], ["Apples", true], ["cherries", false]])
 })

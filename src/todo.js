@@ -43,3 +43,12 @@ export function clearDone(list) {
 export function clearAll(list) {
   return []
 }
+
+// The order the list is shown in; the list itself always stays in the order things were added.
+// "added" (oldest first), "title" (A–Z, ignoring case) or "open-first" (open ones, then done ones).
+export function sortItems(list, order) {
+  const items = [...list]
+  if (order === "title") return items.sort((a, b) => a.title.localeCompare(b.title, undefined, { sensitivity: "base" }) || a.id - b.id)
+  if (order === "open-first") return items.sort((a, b) => a.done - b.done || a.id - b.id)
+  return items.sort((a, b) => a.id - b.id)
+}

@@ -1,1 +1,2 @@
 {"at":"2026-11-20T16:39:40Z","role":"executor","issue":1,"row":null,"pr":2,"run":"44775471055","outcome":"pr","turns":8,"usd":0.1852822,"model":"claude-opus-5-5"}
+{"at":"2026-11-20T16:40:31.309Z","role":"reviewer","issue":1,"row":0,"pr":2,"sha":"20ae431b6ddf625bc4d0f1ab5ff10a380b07bce7","run":"44775649216","outcome":"approve","turns":3,"usd":0.12488780000000001,"model":"claude-opus-5-5"}

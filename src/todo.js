@@ -20,14 +20,16 @@ export function removeItem(list, id) {
   return list.filter((item) => item.id !== id)
 }
 
-// How many items are still open, for the footer ("2 items left").
+// How many items are still open, for the footer ("2 items left · 1 done").
 export function remaining(list) {
   return list.filter((item) => !item.done).length
 }
 
 export function footerText(list) {
   const n = remaining(list)
-  return `${n} ${n === 1 ? "item" : "items"} left`
+  const left = `${n} ${n === 1 ? "item" : "items"} left`
+  const done = list.length - n
+  return done > 0 ? `${left} · ${done} done` : left
 }
 
 export function clearDone(list) {

@@ -7,3 +7,4 @@
 - New storage module saves and loads the list (key `todo-list:v1`); a new to-do never reuses an id already in the list, so ids stay unique after loading. The page does not use it yet.
 - The page keeps the list after a reload: it loads the stored list on start and saves it after every add, tick, delete and "Clear done".
 - A new "Clear all" button under the list removes every to-do, done or not, without asking; the emptied list is saved, so it stays empty after a reload.
+- After ticking a to-do, an "Undo" link under the footer unticks it again; it stays for 5 seconds and only for the last to-do ticked.

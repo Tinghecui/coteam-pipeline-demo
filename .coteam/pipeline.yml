@@ -1,0 +1,14 @@
+version: 1
+preset: startup
+mode: record
+base: main
+stack:
+  setup: []
+  test: "npm test"
+  check: ["npm test"]
+  ui_paths: ["public/**"]
+limits:
+  max_parallel: 2
+  daily_usd: 15
+  issue_max_usd: 8
+  executor_minutes: 40

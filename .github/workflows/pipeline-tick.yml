@@ -1,0 +1,85 @@
+# Copy to .github/workflows/pipeline-tick.yml in your repository (on the default branch).
+#
+# The dispatcher: looks at the issues, pull requests and decisions of this repository and
+# starts whatever is due (an executor run, a review, a merge). It never runs the agent itself.
+# All logic lives in the engine; this file only says when to run it.
+#
+# Replace the version (twice below: `uses: ...@<ref>` and `engine_ref`) with the
+# release you install. Keep the name: the engine refers to this file as pipeline-tick.yml.
+name: pipeline-tick
+
+on:
+  issues:
+    types: [labeled, unlabeled, closed, reopened]
+  issue_comment:
+    types: [created]
+  pull_request:
+    types: [closed, labeled, ready_for_review, synchronize]
+  # Checks reported by CI that runs outside GitHub Actions (a GitHub App or the status API).
+  check_suite:
+    types: [completed]
+  status:
+  workflow_run:
+    # Run a round as soon as an executor or a review ends.
+    # ADD THE NAMES OF YOUR OWN CI WORKFLOWS HERE (their `name:`), for example "CI":
+    # GitHub does not send `check_suite` for its own Actions runs, so without this a green
+    # pull request waits for the schedule below before it is merged.
+    # Never list pipeline-tick itself: it would start itself forever.
+    workflows: ["pipeline-fix", "pipeline-review", "ci"]
+    types: [completed]
+  schedule:
+    # A fallback for events that were missed; the events above do the real work.
+    - cron: "7,37 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry:
+        description: "Print the plan and change nothing"
+        type: boolean
+        default: false
+
+# One round at a time. A running round is never cancelled (it may be half-way through its
+# writes); while one runs, GitHub keeps only the newest waiting round and drops the older
+# ones, which loses nothing because every round reads the whole state again.
+concurrency:
+  group: pipeline-tick
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  pipeline:
+    # Two kinds of events are skipped:
+    # 1. Pull requests from forks. GitHub gives them no secrets, so the round could only fail,
+    #    and the pipeline's own pull requests are always branches of this repository.
+    # 2. Comments and label changes made by the pipeline's own bot. For this the repository
+    #    variable PIPELINE_BOT must hold the login the App writes as ("<app-slug>[bot]"): a
+    #    workflow file cannot work that login out. The variable is optional and used for
+    #    nothing else that matters: the engine finds its own login by itself when it decides
+    #    whose marks to believe (logins named in PIPELINE_BOT are believed in addition).
+    #    The bot comments and labels a lot, and none of that needs another round: what the
+    #    dispatcher wrote it has already acted on in the same round, and what the executor
+    #    or the reviewer wrote is followed by the `workflow_run` event above when they end.
+    #    Only the bot's exact login is skipped, not every bot: another app that labels issues
+    #    for the pipeline still starts a round. Everything else the bot does (merging or
+    #    closing a pull request, pushing a rework, marking a draft ready) is never skipped,
+    #    because the next step depends on it. While PIPELINE_BOT is not set nothing is
+    #    skipped: every comment of the bot starts one more round, which finds nothing to do.
+    if: >-
+      (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+      && !(
+        vars.PIPELINE_BOT != '' && github.event.sender.login == vars.PIPELINE_BOT
+        && (github.event_name == 'issue_comment'
+          || ((github.event_name == 'issues' || github.event_name == 'pull_request')
+            && (github.event.action == 'labeled' || github.event.action == 'unlabeled')))
+      )
+    # Third-party actions used inside: actions/checkout and actions/setup-node, by major
+    # version. To pin them (or the engine) by commit SHA, fork the engine and point here at your fork.
+    uses: Tinghecui/coteam-pipeline/.github/workflows/tick.yml@main
+    with:
+      engine_ref: main
+      app_id: ${{ vars.PIPELINE_APP_ID }}
+      bot_login: ${{ vars.PIPELINE_BOT }}
+      dry: ${{ inputs.dry == true }}
+    secrets:
+      PIPELINE_APP_KEY: ${{ secrets.PIPELINE_APP_KEY }}

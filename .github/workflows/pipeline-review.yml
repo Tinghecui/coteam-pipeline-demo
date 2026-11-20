@@ -1,0 +1,41 @@
+# Copy to .github/workflows/pipeline-review.yml in your repository (on the default branch).
+#
+# The reviewer: reads one pull request with read-only tools and reports a verdict and a risk
+# level. Started by the dispatcher; you can also start it by hand from the Actions tab.
+#
+# Replace the version (twice below) with the release you install. Keep the name,
+# the file name and the run-name: the dispatcher finds this workflow as pipeline-review.yml
+# and tells which pull request a run belongs to from the "PR #<number>" in its title.
+# Keep it dispatch-only: started from a pull request event, a failed review run would count
+# as failed CI on that pull request.
+name: pipeline-review
+run-name: "pipeline-review PR #${{ inputs.pr }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: "Pull request number"
+        type: string
+        required: true
+      dry:
+        description: "Run the reviewer but write nothing"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  pipeline:
+    uses: Tinghecui/coteam-pipeline/.github/workflows/review.yml@main
+    with:
+      engine_ref: main
+      app_id: ${{ vars.PIPELINE_APP_ID }}
+      # Optional: see the note on PIPELINE_BOT in pipeline-tick.yml.
+      bot_login: ${{ vars.PIPELINE_BOT }}
+      pr: ${{ inputs.pr }}
+      dry: ${{ inputs.dry }}
+    secrets:
+      PIPELINE_APP_KEY: ${{ secrets.PIPELINE_APP_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

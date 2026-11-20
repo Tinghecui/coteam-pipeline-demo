@@ -1,0 +1,8 @@
+{
+  "name": "coteam-pipeline-demo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A tiny to-do list used to try coteam-pipeline on a real repository",
+  "scripts": { "test": "node --test test/*.test.js", "start": "node server.js" }
+}

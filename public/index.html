@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>To-do</title>
+    <style>
+      body { font: 16px/1.5 system-ui, sans-serif; max-width: 28rem; margin: 3rem auto; }
+      li.done span { text-decoration: line-through; color: #888; }
+      ul { list-style: none; padding: 0; }
+      li { display: flex; gap: 0.5rem; align-items: center; padding: 0.25rem 0; }
+      li span { flex: 1; }
+    </style>
+  </head>
+  <body>
+    <h1>To-do</h1>
+    <form id="new"><input id="title" placeholder="What needs doing?" autofocus /> <button>Add</button></form>
+    <ul id="items"></ul>
+    <p id="footer"></p>
+    <button id="clear">Clear done</button>
+    <script type="module">
+      import { addItem, clearDone, createList, footerText, removeItem, toggleItem } from "/src/todo.js"
+      let list = createList()
+      const $ = (id) => document.getElementById(id)
+      function render() {
+        $("items").replaceChildren(
+          ...list.map((item) => {
+            const li = document.createElement("li")
+            li.className = item.done ? "done" : ""
+            const box = Object.assign(document.createElement("input"), { type: "checkbox", checked: item.done })
+            box.onchange = () => { list = toggleItem(list, item.id); render() }
+            const text = Object.assign(document.createElement("span"), { textContent: item.title })
+            const del = Object.assign(document.createElement("button"), { textContent: "×" })
+            del.onclick = () => { list = removeItem(list, item.id); render() }
+            li.append(box, text, del)
+            return li
+          }),
+        )
+        $("footer").textContent = footerText(list)
+      }
+      $("new").onsubmit = (e) => {
+        e.preventDefault()
+        try { list = addItem(list, $("title").value); $("title").value = "" } catch (err) { alert(err.message) }
+        render()
+      }
+      $("clear").onclick = () => { list = clearDone(list); render() }
+      render()
+    </script>
+  </body>
+</html>

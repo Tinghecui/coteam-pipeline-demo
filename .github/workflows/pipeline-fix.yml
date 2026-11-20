@@ -1,0 +1,51 @@
+# Copy to .github/workflows/pipeline-fix.yml in your repository (on the default branch).
+#
+# The executor: writes the change for one issue (or one row of a spec issue, or reworks one
+# pull request) and opens the pull request. Started by the dispatcher; you can also start it
+# by hand from the Actions tab.
+#
+# Replace the version (twice below) with the release you install. Keep the name,
+# the file name and the run-name: the dispatcher finds this workflow as pipeline-fix.yml and
+# tells which issue a run belongs to from the "#<number>" in its title.
+name: pipeline-fix
+run-name: "pipeline-fix${{ inputs.issue && format(' #{0}', inputs.issue) || '' }}${{ inputs.row && format(' row {0}', inputs.row) || '' }}${{ inputs.pr && format(' PR #{0}', inputs.pr) || '' }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: "Issue number"
+        type: string
+        default: ""
+      row:
+        description: "Row of the PR split table (spec issues only)"
+        type: string
+        default: ""
+      pr:
+        description: "Pull request to rework (empty: start new work)"
+        type: string
+        default: ""
+      dry:
+        description: "Go through the steps without pushing or opening a pull request"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  pipeline:
+    # Do not add deploy keys or cloud credentials to this workflow: the agent runs in this job.
+    uses: Tinghecui/coteam-pipeline/.github/workflows/fix.yml@main
+    with:
+      engine_ref: main
+      app_id: ${{ vars.PIPELINE_APP_ID }}
+      # Optional: see the note on PIPELINE_BOT in pipeline-tick.yml.
+      bot_login: ${{ vars.PIPELINE_BOT }}
+      issue: ${{ inputs.issue }}
+      row: ${{ inputs.row }}
+      pr: ${{ inputs.pr }}
+      dry: ${{ inputs.dry }}
+    secrets:
+      PIPELINE_APP_KEY: ${{ secrets.PIPELINE_APP_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

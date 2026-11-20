@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { test } from "node:test"
-import { addItem, clearDone, createList, footerText, remaining, removeItem, toggleItem } from "../src/todo.js"
+import { addItem, clearDone, createList, footerText, remaining, removeItem, sortItems, toggleItem } from "../src/todo.js"
 
 test("adding trims the title and refuses an empty one", () => {
   const list = addItem(createList(), "  buy milk  ")
@@ -44,4 +44,15 @@ test("footer adds the done count after a middle dot, only when something is done
   assert.equal(footerText(list), "1 item left · 2 done")
   list = toggleItem(list, list[2].id)
   assert.equal(footerText(list), "0 items left · 3 done")
+})
+
+test("sorting by added order, by title A–Z, or open ones first, without changing the list", () => {
+  let list = addItem(addItem(addItem(createList(), "pears"), "Apples"), "bananas")
+  list = toggleItem(list, list[1].id)
+  const titles = (items) => items.map((i) => i.title)
+  assert.deepEqual(titles(sortItems(list, "added")), ["pears", "Apples", "bananas"])
+  assert.deepEqual(titles(sortItems(list, "title")), ["Apples", "bananas", "pears"])
+  assert.deepEqual(titles(sortItems(list, "open-first")), ["pears", "bananas", "Apples"])
+  assert.deepEqual(titles(sortItems(list, "nonsense")), ["pears", "Apples", "bananas"])
+  assert.deepEqual(titles(list), ["pears", "Apples", "bananas"])
 })

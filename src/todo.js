@@ -2,6 +2,9 @@
 
 let nextId = 1
 
+// Longer titles break the layout; counted after trimming.
+export const MAX_TITLE_LENGTH = 100
+
 export function createList() {
   return []
 }
@@ -9,6 +12,7 @@ export function createList() {
 export function addItem(list, title) {
   const text = String(title ?? "").trim()
   if (!text) throw new Error("A to-do needs a title")
+  if ([...text].length > MAX_TITLE_LENGTH) throw new Error(`A to-do title can be at most ${MAX_TITLE_LENGTH} characters`)
   // Never below an id already in the list, so a list loaded from storage keeps its ids unique.
   const id = Math.max(nextId, ...list.map((item) => item.id + 1))
   nextId = id + 1

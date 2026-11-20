@@ -52,3 +52,10 @@ test("clearing all removes every item, done or not", () => {
   assert.deepEqual(clearAll(list), [])
   assert.deepEqual(clearAll(createList()), [])
 })
+
+test("adding refuses a title longer than 100 characters", () => {
+  const list = addItem(createList(), "x".repeat(100))
+  assert.equal(list[0].title.length, 100)
+  assert.equal(addItem(list, `  ${"y".repeat(100)}  `)[1].title, "y".repeat(100))
+  assert.throws(() => addItem(list, "x".repeat(101)), { message: "A to-do title can be at most 100 characters" })
+})

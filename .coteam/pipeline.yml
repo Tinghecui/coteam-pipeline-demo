@@ -7,8 +7,12 @@ stack:
   test: "npm test"
   check: ["npm test"]
   ui_paths: ["public/**"]
+risk:
+  # Test setting: every change under src/ asks an owner (level 2).
+  level2: ["src/**"]
 limits:
   max_parallel: 2
-  daily_usd: 15
+  # Test setting: already spent, so the next issue has to wait.
+  daily_usd: 1
   issue_max_usd: 8
   executor_minutes: 40

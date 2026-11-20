@@ -31,3 +31,4 @@
 {"at":"2026-11-20T18:05:24Z","role":"executor","issue":27,"row":null,"pr":28,"run":"44789312100","outcome":"pr","turns":8,"usd":0.2594006,"model":"claude-opus-5-5"}
 {"at":"2026-11-20T18:06:27.014Z","role":"reviewer","issue":27,"row":0,"pr":28,"sha":"02caedd67f0fb01d54228994781847d3fd0b0e57","run":"44789521867","outcome":"approve","turns":4,"usd":0.1492182,"model":"claude-opus-5-5"}
 {"at":"2026-11-20T19:15:37Z","role":"executor","issue":29,"row":null,"pr":30,"run":"44800307546","outcome":"pr","turns":9,"usd":0.2310724,"model":"claude-opus-5-5"}
+{"at":"2026-11-20T19:16:37.219Z","role":"reviewer","issue":29,"row":0,"pr":30,"sha":"f32a35e35a28c2a55074d6d4c004605b3a210b7d","run":"44800530648","outcome":"needs_human","turns":4,"usd":0.1307348,"model":"claude-opus-5-5"}

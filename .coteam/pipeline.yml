@@ -1,9 +1,6 @@
 version: 1
 preset: startup
 mode: on
-merge:
-  # Test setting: level-2 defaults after 15 minutes instead of 24 hours.
-  default_after_hours: 0.25
 base: main
 stack:
   setup: []
@@ -12,6 +9,6 @@ stack:
   ui_paths: ["public/**"]
 limits:
   max_parallel: 2
-  daily_usd: 1
+  daily_usd: 15
   issue_max_usd: 8
   executor_minutes: 40

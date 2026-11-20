@@ -1,6 +1,6 @@
 version: 1
 preset: startup
-mode: record
+mode: on
 base: main
 stack:
   setup: []

@@ -9,10 +9,16 @@ export function createList() {
   return []
 }
 
-export function addItem(list, title) {
+// The same rules for a new title and a renamed one: trimmed, not empty, not too long.
+function cleanTitle(title) {
   const text = String(title ?? "").trim()
   if (!text) throw new Error("A to-do needs a title")
   if ([...text].length > MAX_TITLE_LENGTH) throw new Error(`A to-do title can be at most ${MAX_TITLE_LENGTH} characters`)
+  return text
+}
+
+export function addItem(list, title) {
+  const text = cleanTitle(title)
   // Never below an id already in the list, so a list loaded from storage keeps its ids unique.
   const id = Math.max(nextId, ...list.map((item) => item.id + 1))
   nextId = id + 1
@@ -21,6 +27,12 @@ export function addItem(list, title) {
 
 export function toggleItem(list, id) {
   return list.map((item) => (item.id === id ? { ...item, done: !item.done } : item))
+}
+
+// An id not in the list leaves it unchanged; the title is still checked, as addItem checks it.
+export function renameItem(list, id, title) {
+  const text = cleanTitle(title)
+  return list.map((item) => (item.id === id ? { ...item, title: text } : item))
 }
 
 export function removeItem(list, id) {

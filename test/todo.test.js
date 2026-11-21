@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { test } from "node:test"
-import { addItem, clearAll, clearDone, countOpen, createList, footerText, remaining, removeItem, sortItems, toggleItem } from "../src/todo.js"
+import { addItem, clearAll, clearDone, countOpen, createList, footerText, remaining, removeItem, renameItem, sortItems, toggleItem } from "../src/todo.js"
 
 test("adding trims the title and refuses an empty one", () => {
   const list = addItem(createList(), "  buy milk  ")
@@ -85,4 +85,25 @@ test("countOpen counts the to-dos not done yet", () => {
   assert.equal(countOpen(list), 2)
   list = toggleItem(toggleItem(list, list[0].id), list[2].id)
   assert.equal(countOpen(list), 0)
+})
+
+test("renaming gives one item a new, trimmed title and leaves the rest alone", () => {
+  const list = addItem(addItem(createList(), "a"), "b")
+  const renamed = renameItem(list, list[1].id, "  buy bread  ")
+  assert.deepEqual(renamed.map((i) => i.title), ["a", "buy bread"])
+  assert.equal(renamed[1].id, list[1].id)
+  assert.equal(renamed[1].done, false)
+  assert.deepEqual(list.map((i) => i.title), ["a", "b"])
+})
+
+test("renaming refuses an empty title or one longer than 100 characters", () => {
+  const list = addItem(createList(), "a")
+  assert.throws(() => renameItem(list, list[0].id, "   "), { message: "A to-do needs a title" })
+  assert.throws(() => renameItem(list, list[0].id, "x".repeat(101)), { message: "A to-do title can be at most 100 characters" })
+  assert.equal(renameItem(list, list[0].id, "x".repeat(100))[0].title, "x".repeat(100))
+})
+
+test("renaming an id that is not in the list returns the list unchanged", () => {
+  const list = addItem(createList(), "a")
+  assert.deepEqual(renameItem(list, list[0].id + 1000, "b"), list)
 })

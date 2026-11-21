@@ -9,6 +9,11 @@ export function createList() {
   return []
 }
 
+// Whether the list has no to-dos at all, done or not.
+export function isEmpty(list) {
+  return list.length === 0
+}
+
 // The same rules for a new title and a renamed one: trimmed, not empty, not too long.
 function cleanTitle(title) {
   const text = String(title ?? "").trim()

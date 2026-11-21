@@ -16,3 +16,4 @@
 - New `renameItem(list, id, title)` in the to-do logic gives a to-do a new title, trimmed, with the same rules as adding one; an unknown id leaves the list unchanged. The page does not use it.
 - New `countDone(list)` in the to-do logic returns how many to-dos are done. The page does not use it.
 - New `hasOpenItems(list)` in the to-do logic is true when at least one to-do is not done yet (false for an empty list). The page does not use it.
+- New `isEmpty(list)` in the to-do logic is true when the list has no to-dos at all, done or not. The page does not use it.

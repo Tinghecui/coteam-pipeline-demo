@@ -36,9 +36,9 @@ permissions:
 jobs:
   pipeline:
     # Do not add deploy keys or cloud credentials to this workflow: the agent runs in this job.
-    uses: Tinghecui/coteam-pipeline/.github/workflows/fix.yml@v0.2.0
+    uses: Tinghecui/coteam-pipeline/.github/workflows/fix.yml@main
     with:
-      engine_ref: v0.2.0
+      engine_ref: main
       app_id: ${{ vars.PIPELINE_APP_ID }}
       # Optional: see the note on PIPELINE_BOT in pipeline-tick.yml.
       bot_login: ${{ vars.PIPELINE_BOT }}

@@ -75,9 +75,9 @@ jobs:
       )
     # Third-party actions used inside: actions/checkout and actions/setup-node, by major
     # version. To pin them (or the engine) by commit SHA, fork the engine and point here at your fork.
-    uses: Tinghecui/coteam-pipeline/.github/workflows/tick.yml@harden/split-jobs
+    uses: Tinghecui/coteam-pipeline/.github/workflows/tick.yml@main
     with:
-      engine_ref: harden/split-jobs
+      engine_ref: main
       app_id: ${{ vars.PIPELINE_APP_ID }}
       bot_login: ${{ vars.PIPELINE_BOT }}
       dry: ${{ inputs.dry == true }}

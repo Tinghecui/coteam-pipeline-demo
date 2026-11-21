@@ -49,6 +49,11 @@ export function remaining(list) {
   return list.filter((item) => !item.done).length
 }
 
+// The titles of all to-dos, done or not, in the list's order.
+export function titles(list) {
+  return list.map((item) => item.title)
+}
+
 // How many to-dos are not done yet; the same count as remaining(), so the two cannot drift apart.
 export function countOpen(list) {
   return remaining(list)

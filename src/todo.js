@@ -49,6 +49,11 @@ export function countOpen(list) {
   return remaining(list)
 }
 
+// How many to-dos are done; together with countOpen() it adds up to the whole list.
+export function countDone(list) {
+  return list.length - remaining(list)
+}
+
 export function footerText(list) {
   const n = remaining(list)
   const left = `${n} ${n === 1 ? "item" : "items"} left`

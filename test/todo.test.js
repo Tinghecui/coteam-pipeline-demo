@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { test } from "node:test"
-import { addItem, clearAll, clearDone, countOpen, createList, footerText, remaining, removeItem, renameItem, sortItems, toggleItem } from "../src/todo.js"
+import { addItem, clearAll, clearDone, countOpen, createList, footerText, hasOpenItems, remaining, removeItem, renameItem, sortItems, toggleItem } from "../src/todo.js"
 
 test("adding trims the title and refuses an empty one", () => {
   const list = addItem(createList(), "  buy milk  ")
@@ -85,6 +85,15 @@ test("countOpen counts the to-dos not done yet", () => {
   assert.equal(countOpen(list), 2)
   list = toggleItem(toggleItem(list, list[0].id), list[2].id)
   assert.equal(countOpen(list), 0)
+})
+
+test("hasOpenItems is true only when at least one to-do is not done", () => {
+  assert.equal(hasOpenItems(createList()), false)
+  let list = addItem(addItem(createList(), "a"), "b")
+  list = toggleItem(toggleItem(list, list[0].id), list[1].id)
+  assert.equal(hasOpenItems(list), false)
+  list = toggleItem(list, list[1].id)
+  assert.equal(hasOpenItems(list), true)
 })
 
 test("renaming gives one item a new, trimmed title and leaves the rest alone", () => {

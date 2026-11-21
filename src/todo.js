@@ -54,6 +54,11 @@ export function countDone(list) {
   return list.length - remaining(list)
 }
 
+// Whether at least one to-do is not done yet; an empty list has none.
+export function hasOpenItems(list) {
+  return remaining(list) > 0
+}
+
 export function footerText(list) {
   const n = remaining(list)
   const left = `${n} ${n === 1 ? "item" : "items"} left`

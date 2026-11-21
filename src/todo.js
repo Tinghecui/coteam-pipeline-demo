@@ -49,6 +49,11 @@ export function countOpen(list) {
   return remaining(list)
 }
 
+// How many to-dos are done; together with countOpen() it adds up to the whole list.
+export function countDone(list) {
+  return list.length - remaining(list)
+}
+
 // Whether at least one to-do is not done yet; an empty list has none.
 export function hasOpenItems(list) {
   return remaining(list) > 0

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { test } from "node:test"
-import { addItem, clearAll, clearDone, countDone, countOpen, createList, footerText, hasOpenItems, remaining, removeItem, renameItem, sortItems, toggleItem } from "../src/todo.js"
+import { addItem, clearAll, clearDone, countDone, countOpen, createList, footerText, hasOpenItems, isEmpty, remaining, removeItem, renameItem, sortItems, toggleItem } from "../src/todo.js"
 
 test("adding trims the title and refuses an empty one", () => {
   const list = addItem(createList(), "  buy milk  ")
@@ -123,4 +123,13 @@ test("renaming refuses an empty title or one longer than 100 characters", () => 
 test("renaming an id that is not in the list returns the list unchanged", () => {
   const list = addItem(createList(), "a")
   assert.deepEqual(renameItem(list, list[0].id + 1000, "b"), list)
+})
+
+test("isEmpty is true for a new list and false once it has one item, done or not", () => {
+  const empty = createList()
+  assert.equal(isEmpty(empty), true)
+  const one = addItem(empty, "a")
+  assert.equal(isEmpty(one), false)
+  assert.equal(isEmpty(toggleItem(one, one[0].id)), false)
+  assert.equal(isEmpty(removeItem(one, one[0].id)), true)
 })

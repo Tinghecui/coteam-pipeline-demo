@@ -17,3 +17,4 @@
 - New `countDone(list)` in the to-do logic returns how many to-dos are done. The page does not use it.
 - New `hasOpenItems(list)` in the to-do logic is true when at least one to-do is not done yet (false for an empty list). The page does not use it.
 - New `isEmpty(list)` in the to-do logic is true when the list has no to-dos at all, done or not. The page does not use it.
+- New `titles(list)` in the to-do logic returns the titles of all to-dos, done or not, in the list's order. The page does not use it.

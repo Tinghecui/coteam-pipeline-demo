@@ -13,3 +13,4 @@
 - The browser tab title reads "To-dos (N open)", N being the to-dos not ticked yet, and follows every change.
 - The README says how to run the tests.
 - New `countOpen(list)` in the to-do logic returns how many to-dos are not done yet. The page does not use it.
+- New `renameItem(list, id, title)` in the to-do logic gives a to-do a new title, trimmed, with the same rules as adding one; an unknown id leaves the list unchanged. The page does not use it.

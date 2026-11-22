@@ -54,6 +54,11 @@ export function titles(list) {
   return list.map((item) => item.title)
 }
 
+// How many to-dos there are in all, done or not.
+export function count(list) {
+  return list.length
+}
+
 // How many to-dos are not done yet; the same count as remaining(), so the two cannot drift apart.
 export function countOpen(list) {
   return remaining(list)

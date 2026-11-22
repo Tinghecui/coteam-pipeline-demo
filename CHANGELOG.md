@@ -19,3 +19,4 @@
 - New `isEmpty(list)` in the to-do logic is true when the list has no to-dos at all, done or not. The page does not use it.
 - New `titles(list)` in the to-do logic returns the titles of all to-dos, done or not, in the list's order. The page does not use it.
 - New `count(list)` in the to-do logic returns how many to-dos there are in all, done or not. The page does not use it.
+- New `findByTitle(list, title)` in the to-do logic returns the first to-do whose title is exactly `title`, or `null` when there is none. The page does not use it.

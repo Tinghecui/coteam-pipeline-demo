@@ -54,6 +54,11 @@ export function titles(list) {
   return list.map((item) => item.title)
 }
 
+// The first to-do whose title is exactly this one (case and spaces count), or null when there is none.
+export function findByTitle(list, title) {
+  return list.find((item) => item.title === title) ?? null
+}
+
 // How many to-dos there are in all, done or not.
 export function count(list) {
   return list.length

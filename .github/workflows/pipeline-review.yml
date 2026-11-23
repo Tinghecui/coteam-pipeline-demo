@@ -28,9 +28,9 @@ permissions:
 
 jobs:
   pipeline:
-    uses: Tinghecui/coteam-pipeline/.github/workflows/review.yml@c811287874c05a1f1b34fa23b3c577e47c2b3a72
+    uses: Tinghecui/coteam-pipeline/.github/workflows/review.yml@main
     with:
-      engine_ref: c811287874c05a1f1b34fa23b3c577e47c2b3a72
+      engine_ref: main
       app_id: ${{ vars.PIPELINE_APP_ID }}
       # Optional: see the note on PIPELINE_BOT in pipeline-tick.yml.
       bot_login: ${{ vars.PIPELINE_BOT }}
